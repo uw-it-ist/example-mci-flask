@@ -1,0 +1,133 @@
+# vi:syntax=yaml
+
+source: "$URL$"
+
+processes:
+    - name: example-web
+      environment: production
+
+      supervisor: |
+          command = /netops/sbin/example-web -b unix:/data/run/example-web.sock --worker-class=eventlet --log-config=/netops/lib/python/example/configurations/logging/production.conf --statsd-host=localhost:8125 --statsd-prefix=example-web
+          user = toolop
+          autostart = true
+          autorestart = true
+          stdout_logfile = /data/logs/supervisor/example-web.log
+          stdout_logfile_maxbytes = 10MB
+          stdout_logfile_backups = 4
+          stdout_events_enabled = true
+          stderr_logfile = /data/logs/supervisor/example-web.err
+          stderr_logfile_maxbytes = 10MB
+          stderr_logfile_backups = 4
+          stderr_events_enabled = true
+          environment = FLASK_CONFIG="configurations/production.cfg"
+
+      monitoring:
+          # this makes all monitors below create events with this ci. each
+          # monitor type can have also specify its own ci to override this
+          # default ci. each monitor below can also have a "kba" option that
+          # should reference a UW Connect knowledge base article, if any.
+          ci:
+              name: Infrastructure Software Tools
+              organization: UW-IT
+
+          daemon:
+              severity: 1
+          state:
+              severity: 1
+          logs:
+              stdout:
+                  - regex: .*ERROR.*
+                    severity: 4
+              stderr:
+                  - regex: .*ERROR.*
+                    severity: 4
+
+    - name: example-web
+      environment: testing
+
+      supervisor: |
+          command = /netops/sbin/example-web -b unix:/data/run/example-web.sock --worker-class=eventlet --log-config=/netops/lib/python/example/configurations/logging/testing.conf --statsd-host=localhost:8125 --statsd-prefix=example-web
+          user = toolop
+          autostart = true
+          autorestart = true
+          stdout_logfile = /data/logs/supervisor/example-web.log
+          stdout_logfile_maxbytes = 10MB
+          stdout_logfile_backups = 4
+          stdout_events_enabled = true
+          stderr_logfile = /data/logs/supervisor/example-web.err
+          stderr_logfile_maxbytes = 10MB
+          stderr_logfile_backups = 4
+          stderr_events_enabled = true
+          environment = FLASK_CONFIG="configurations/testing.cfg"
+
+      monitoring:
+          # this makes all monitors below create events with this ci. each
+          # monitor type can have also specify its own ci to override this
+          # default ci. each monitor below can also have a "kba" option that
+          # should reference a UW Connect knowledge base article, if any.
+          ci:
+              name: Infrastructure Software Tools
+              organization: UW-IT
+
+          daemon:
+              severity: 3
+          state:
+              severity: 3
+          logs:
+              stdout:
+                  - regex: .*ERROR.*
+                    severity: 4
+              stderr:
+                  - regex: .*ERROR.*
+                    severity: 4
+
+    - name: example-web
+      environment: development
+
+      supervisor: |
+          command = /netops/sbin/example-web -b unix:/data/run/example-web.sock --worker-class=eventlet --log-config=/netops/lib/python/example/configurations/logging/testing.conf
+          user = toolop
+          autostart = true
+          autorestart = true
+          stdout_logfile = /data/logs/supervisor/example-web.log
+          stdout_logfile_maxbytes = 10MB
+          stdout_logfile_backups = 4
+          stdout_events_enabled = true
+          stderr_logfile = /data/logs/supervisor/example-web.err
+          stderr_logfile_maxbytes = 10MB
+          stderr_logfile_backups = 4
+          stderr_events_enabled = true
+          environment = FLASK_CONFIG="configurations/development.cfg"
+
+      monitoring:
+          # this makes all monitors below create events with this ci. each
+          # monitor type can also specify its own ci to override this default
+          # ci. each monitor below can also have a "kba" option that should
+          # reference a UW Connect knowledge base article, if any.
+          ci:
+              name: Infrastructure Software Tools
+              organization: UW-IT
+
+          daemon:
+              # each monitor type (daemon, state, stdout/stderr) can use this
+              # option to link to a KB article that will be included with any
+              # incident created by the monitor. however, this is optional.
+              kba: KB001234
+              severity: 4
+
+          state:
+              # each monitor type (daemon, state, stdout/stderr) can use this
+              # option to link to a KB article that will be included with any
+              # incident created by the monitor. however, this is optional.
+              kba: KB001234
+              severity: 4
+
+          logs:
+              stdout:
+                  - regex: .*ERROR.*
+                    kba: KB001234
+                    severity: 4
+              stderr:
+                  - regex: .*ERROR.*
+                    kba: KB001234
+                    severity: 4

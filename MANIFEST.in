@@ -1,0 +1,3 @@
+recursive-include lib/example/configurations *
+recursive-include lib/example/main/templates *
+recursive-include lib/example/main/static *
