@@ -1,0 +1,101 @@
+# Docker Compose will let you run your application locally with multiple containers.
+# This should let you emulate the production system on you local workstation.
+#
+# To run this app you use these commands:
+#   docker-compose build
+#   docker-compose up
+#   ssh -L 5432:mario-dev01:5432 bowser-dev01
+#   curl http://localhost:8001/example-flask-app/
+
+version: '3'
+services:
+
+  # This is your app and it will be similar to YAML for the MCI K8s Deployment
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      APPLICATION_ROOT: /example-flask-app
+      FLASK_SESSION_KEY: asdf1234qwerty
+      CACHE_REDIS_HOST: redis
+      DSN_TOOLSDB: "host=host.docker.internal user=toolop dbname=ripit_2 sslmode=require"
+
+    # for local development mount and run your local copy instead of the one in the container
+    volumes:
+      - ./flask_app:/home/toolop/flask_app
+    entrypoint: /home/toolop/venv/bin/gunicorn flask_app.loader:app -b :8000 --workers 3 --access-logfile - --log-level INFO --reload
+
+
+  # This emulates your app integrated in to the production nginx ingress config
+  nginx:
+    image: nginx
+    ports:
+      - "8001:80"
+    environment:
+      NGINX_CONFIG: |
+        server {
+          listen 80;
+
+          location /example-flask-app/ {
+              proxy_set_header X-Forwarded-User test;
+              proxy_pass http://app:8000/example-flask-app/;
+          }
+
+          location /shared/ { proxy_pass http://web-shared.default/shared/; }
+          location /whoami/ { proxy_pass http://whoami.default/whoami/; }
+        }
+    command: /bin/sh -c "echo $$NGINX_CONFIG > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+
+
+  # redis is available in the MCI cluster and is used by flask_caching
+  redis:
+    image: "redis:5-alpine"
+
+
+  # Our web-shared CDN is available in the MCI cluster
+  web-shared.default:
+    image: gcr.io/uwit-mci-ist/web-shared:latest
+
+
+  # This emulates how the whoami app is provided in the MCI cluster
+  whoami.default:
+    image: nginx
+    expose:
+      - "80"
+    environment:
+      NGINX_CONFIG: |
+        server {
+          listen 80;
+
+          location @whoami_empty_json {
+              internal;
+              add_header Content-Type application/json;
+              return 200 '{"netid":""}';
+          }
+          location /whoami-json/ {
+              internal;
+              add_header Content-Type application/json;
+              return 200 '{"netid":"$$1"}';
+          }
+          location /whoami-rewrite/ {
+              rewrite ^/whoami-rewrite/(.*)$$ /whoami-json/$$1;
+          }
+          location /whoami/ {
+              auth_request /saml/status;
+              error_page 401 = @whoami_empty_json;
+              auth_request_set $$auth_user $$upstream_http_x_saml_user;
+              proxy_pass http://whoami.default/whoami-rewrite/$$auth_user;
+          }
+
+          location /saml/ {
+              add_header X-Forwarded-User $$upstream_http_x_saml_user;
+              proxy_pass http://whoami.default/saml-proxy/;
+          }
+          location /saml-proxy/ {
+              add_header Content-Type text/html;
+              add_header X-SAML-User test-netid;
+              return 200 'OK';
+          }
+        }
+    command: /bin/sh -c "echo $$NGINX_CONFIG > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
