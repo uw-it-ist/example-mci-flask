@@ -1,11 +1,11 @@
 {% extends "master.html" %}
 
 {% block content %}
-    Customers, alphabetically.
+    Items:
     <ul>
-        {% for customer in customers %}
+        {% for item in items %}
             <li>
-                <a href="{{ url_for('main.customer', site=customer.id) }}">{{ customer.name }}</a>
+                <a href="{{ url_for('main.item', id=item.id) }}">{{ item.name }}</a>
             </li>
         {% endfor %}
     </ul>

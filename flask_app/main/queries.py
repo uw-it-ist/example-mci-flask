@@ -1,24 +1,22 @@
-from ..app import db_client
-from ..app import cache
+from ..app import cache, toolsdb
+import psycopg2.extras
+from ..app import logger
 
 
-# The maximum size of a value you can store in memcached is 1 megabyte. memoize
-# uses the function name and input variables as the key. flask-caching can also
-# be used to cache view functions, templates and data explicitly.
+# flask-caching can also cache view functions, templates and data explicitly.
 # see https://flask-caching.readthedocs.io/en/latest/
 @cache.memoize(timeout=30)
-def get_customers():
+def get_items():
     results = []
 
-    conn = db_client.conn()
-    cur = conn.cursor()
+    cur = toolsdb().cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("""
-        SELECT name
-        FROM customers
-        ORDER BY name
+        SELECT 1 AS id, 'foo' AS name
+        UNION
+        SELECT 2 AS id, 'bar' AS name;
     """)
-    for row in cur:
-        results.append(row)
+    results = cur.fetchall()
     cur.close()
 
+    logger.debug("get_items() db query completed")
     return results
