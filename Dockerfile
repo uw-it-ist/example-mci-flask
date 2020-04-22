@@ -25,7 +25,7 @@ RUN python setup.py -q test
 # install the app to the venv
 RUN pip install -q .
 
-# show what can be put in requirments.txt to pin dependencies for future container builds
+# show what can be put in requirements.txt to pin dependencies for future container builds
 RUN echo "save to requirements.txt to pin dependencies" && pip freeze | grep -v $(python3 setup.py --name)
 
 # discard the first stage and start again for the final image
