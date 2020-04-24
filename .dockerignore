@@ -4,6 +4,7 @@
 **/*.pyc
 .git
 .pytest_cache
+.tox
 .coverage
 venv
 build/

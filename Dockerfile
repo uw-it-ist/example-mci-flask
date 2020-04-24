@@ -6,21 +6,27 @@ RUN adduser toolop --gecos "" --disabled-password
 RUN mkdir -p /home/toolop/app && chown -R toolop:toolop /home/toolop
 USER toolop
 
-# add the app
+# add the app source
 WORKDIR /home/toolop
 COPY . app
 
-# work in a venv
+# activate the venv
 ENV PATH="/home/toolop/venv/bin:$PATH"
+
+# run unit tests
 RUN python3 -m venv venv
+WORKDIR /home/toolop/app
+RUN pip install tox
+RUN tox
+
+# rebuild the venv that will stay in the container
+WORKDIR /home/toolop
+RUN rm -rf venv; python3 -m venv venv
 WORKDIR /home/toolop/app
 
 # install pinned requirements
 # during development keep this file empty so you automatically get the latest versions
 RUN pip install -r requirements.txt
-
-# run unit tests
-RUN python setup.py -q test
 
 # install the app to the venv
 RUN pip install -q .

@@ -14,6 +14,4 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=['flask', 'gunicorn', 'flask-caching', 'redis', 'whitenoise', 'psycopg2-binary', 'requests'],
-    setup_requires=('pytest-runner'),
-    tests_require=('pytest', 'pytest-flake8', 'pytest-cov', 'pytest-flask'),
 )
