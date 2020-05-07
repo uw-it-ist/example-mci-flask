@@ -9,13 +9,10 @@ Here is some guidance for writing good documentation:
 - [Documenting your projects on GitHub](https://guides.github.com/features/wikis/)
 
 
-Setup
------
+Getting started
+---------------
 
-To work on this application you will need to set up a few things.
-
-- [install Docker](https://docs.docker.com/) for local testing
-- install the [Google Cloud SDK](https://cloud.google.com/sdk/) to use gcloud and kubectl
+- Setup your [development environment](https://wiki.cac.washington.edu/x/4fDFBg)
 - Learn more [about MCI](https://wiki.cac.washington.edu/x/T3ZjBg)
 
 
