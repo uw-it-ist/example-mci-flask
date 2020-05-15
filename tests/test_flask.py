@@ -1,12 +1,12 @@
 from unittest.mock import patch
 
 import os
-os.environ['FLASK_SESSION_KEY'] = 'abc123'  # noqa: E402
-os.environ['DSN_TOOLSDB'] = 'host=localhost user=toolop dbname=ripit_2 sslmode=require'  # noqa: E402
+os.environ['FLASK_SESSION_KEY'] = 'abc123'
+os.environ['DSN_TOOLSDB'] = 'host=localhost user=toolop dbname=ripit_2 sslmode=require'
 
-# monkey patch flask_caching to work without redis
-from flask_caching import Cache
-import flask_app.app
+# monkey patch flask_caching to work without redis during testing
+from flask_caching import Cache  # noqa: E402
+import flask_app.app  # noqa: E402
 flask_app.app.cache = Cache(config={
     "CACHE_TYPE": "simple",
 })
