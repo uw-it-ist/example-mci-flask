@@ -1,15 +1,17 @@
-import sys
 from setuptools import setup, find_packages
 
-# tell python to not write bytecode files
-sys.dont_write_bytecode = True
+
+def readme():
+    with open('README.md') as f:
+        return f.read()
+
 
 setup(
-    name='example-web',
-    scripts=['sbin/example-web'],
-    package_dir={'': 'lib'},
-    packages=find_packages(where='lib', exclude=('tests', 'tests.*')),
+    name='my-flask-app',
+    version='1.0',
+    long_description=readme(),
+    packages=find_packages(),
     include_package_data=True,
-    setup_requires=('pytest-runner'),
-    tests_require=('pytest-flake8', 'pytest'),
+    zip_safe=False,
+    install_requires=['flask', 'gunicorn', 'flask-caching', 'redis', 'whitenoise', 'psycopg2-binary', 'requests'],
 )

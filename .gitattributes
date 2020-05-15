@@ -1,2 +1,0 @@
-* filter=rcs-keywords
-* url_pattern=https://github.com/uw-it-ist/example-mci-flask/commit/{commit}

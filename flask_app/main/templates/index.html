@@ -1,0 +1,12 @@
+{% extends "master.html" %}
+
+{% block content %}
+    Items:
+    <ul>
+        {% for item in items %}
+            <li>
+                <a href="{{ url_for('main.item', id=item.id) }}">{{ item.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
