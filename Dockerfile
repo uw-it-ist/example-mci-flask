@@ -50,7 +50,7 @@ COPY --from=build-stage /home/toolop/venv /home/toolop/venv
 EXPOSE 8000
 
 # start the executable
-ENTRYPOINT ["/home/toolop/venv/bin/gunicorn", "flask_app.loader:app"]
+ENTRYPOINT ["/home/toolop/venv/bin/gunicorn", "flask_app.app:load()"]
 
 # default parameters that can be overridden with: docker run <image> new params
 CMD ["-b", ":8000", "--access-logfile", "-", "--log-level", "INFO"]

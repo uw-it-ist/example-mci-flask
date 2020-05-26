@@ -10,7 +10,8 @@ import flask_app.app  # noqa: E402
 flask_app.app.cache = Cache(config={
     "CACHE_TYPE": "simple",
 })
-from flask_app.loader import app  # noqa: E402
+
+app = flask_app.app.load()
 
 
 def test_health_check():
