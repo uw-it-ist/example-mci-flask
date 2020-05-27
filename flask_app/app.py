@@ -69,11 +69,11 @@ def load():
     prefix = app.config.get("APPLICATION_ROOT", "")
 
     # register the blueprint routes at the url_prefix
-    from .main import main
+    from flask_app.main.views import main
     logger.info("using application url prefix {}".format(prefix))
     app.register_blueprint(main, url_prefix=prefix)
 
-    from .api import api
+    from flask_app.api.views import api
     api_prefix = "{}/api".format(prefix)
     logger.info("using api url prefix {}".format(api_prefix))
     app.register_blueprint(api, url_prefix=api_prefix)

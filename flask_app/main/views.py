@@ -1,9 +1,12 @@
-from . import main
-from . import queries
-from flask import render_template, request, session
-from ..app import logger
+from flask_app.main import queries
+from flask import render_template, request, session, Blueprint
+from flask_app.app import logger
 import werkzeug.exceptions
 import functools
+
+
+main = Blueprint("main", "flask_app.main", static_folder="static",
+                 template_folder="templates")
 
 
 # wrapper for routes that reqire weblogin auth

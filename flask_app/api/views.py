@@ -1,5 +1,8 @@
-from . import api
-from flask import make_response, jsonify
+from flask import make_response, jsonify, Blueprint
+
+
+api = Blueprint("api", "flask_app.api", static_folder=None,
+                template_folder=None)
 
 
 @api.route("/healthz")

@@ -1,6 +1,5 @@
-from ..app import cache, toolsdb
+from flask_app.app import cache, logger, toolsdb
 import psycopg2.extras
-from ..app import logger
 
 
 # flask-caching can also cache view functions, templates and data explicitly.
