@@ -23,8 +23,8 @@ services:
 
     # for local development mount and run your local copy instead of the one in the container
     volumes:
-      - ./flask_app:/home/toolop/flask_app
-    entrypoint: /home/toolop/venv/bin/gunicorn 'flask_app.app:load()' -b :8000 --workers 3 --access-logfile - --log-level INFO --reload
+      - ./flask_app:/home/toolop/app/flask_app
+    entrypoint: gunicorn 'flask_app.app:load()' -b :8000 --workers 3 --access-logfile - --log-level INFO --reload
 
 
   # This emulates your app integrated in to the production nginx ingress config
