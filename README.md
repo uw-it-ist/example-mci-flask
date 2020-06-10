@@ -16,32 +16,48 @@ Getting started
 - Learn more [about MCI](https://wiki.cac.washington.edu/x/T3ZjBg)
 
 
-Testing
--------
+Development
+-----------
 
 The same container that runs locally for testing should run in production.
 Configuration and secrets are provided to the container at runtime.
 The application should not need to be aware of the environment it runs in.
 
-### Reproducible container building
-
-Python dependencies can be pinned in the setup.py or a requirements.txt file.
-During development you normally want to use the latest versions of dependencies so you can
-clear the requirements.txt file and the docker-compose build will install the latest versions.
-When you want to freeze the dependencies copy them to the requirements.txt file.
-
-### Local Development
+### Dependency pinning
 
     rm -rf venv
-    python3 -m venv venv && source venv/bin/activate
-    python3 setup.py test
-    pip install .
-    pip freeze | grep -v $(python3 setup.py --name) > requirements.txt
+    python3 -m venv venv && . venv/bin/activate
+    pip-sync
+
+Python dependencies are pinned using [pip-tools][]. The `requirements.in` file
+lists the direct dependencies of the application with a version constraint
+allowing minor and point release upgrades, but not major version upgrades.
+
+It's probably most sensible to install `pip-tools` in your user-wise Python
+packages, rather than inside each venv. (This recommendation may change.) All
+the below commands should be run while the venv is activated, however.
+
+To add a dependency, add a constrained requirement for it to `requirements.in`
+and run `pip-compile`.
+
+To upgrade all dependencies to new versions that match the `requirements.in`
+constraints, run `pip-compile --upgrade`. (Eventually we may have a process do
+this automatically and make pull requests.)
+
+`pip-compile`'s output is a `requirements.txt` file, which should be committed
+when it changes and never edited manually.
+
+To install the pinned dependencies in `requirements.txt` into your venv, run
+`pip-sync`.
+
+[pip-tools]: https://github.com/jazzband/pip-tools
 
 
-### Local testing
+### Container build
 
     # open a tunnel to the database
+    # if the app connects to more than one database cluster, you'll need
+    # to forward a different local port to each one.
     ssh -L 5432:mario-dev01:5432 bowser-dev01
 
     # build
