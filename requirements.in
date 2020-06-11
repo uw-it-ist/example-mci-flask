@@ -1,0 +1,9 @@
+# After adding or changing a dependency, run:
+#   pip-compile requirements.in
+flask~=1.1
+gunicorn~=20.0
+flask-caching~=1.9
+redis~=3.5
+whitenoise~=5.1
+psycopg2-binary~=2.8
+requests~=2.23
