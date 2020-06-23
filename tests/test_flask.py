@@ -29,13 +29,13 @@ def test_api_health_check():
 def test_index_page_401():
     with app.test_client() as c:
         rv = c.get(path='/')
-        assert b'You do not have access' in rv.data and rv.status_code == 401
+        assert rv.status_code == 401
 
 
 def test_item_page_401():
     with app.test_client() as c:
         rv = c.get(path='/item/1')
-        assert b'You do not have access' in rv.data and rv.status_code == 401
+        assert rv.status_code == 401
 
 
 def test_item_page():
