@@ -7,6 +7,6 @@ gunicorn~=20.0
 flask-caching~=1.9
 redis~=3.5
 whitenoise~=5.1
-psycopg2-binary~=2.8
 requests~=2.23
 tools-flask-authz~=1.0,>=1.0.2
+tools-flask-db~=1.0

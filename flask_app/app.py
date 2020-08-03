@@ -1,10 +1,9 @@
 import os
 import logging
-from flask import Flask, session, abort
+from flask import Flask, session
 from flask_caching import Cache
 from whitenoise import WhiteNoise
-from flask import g
-import psycopg2
+from tools.flask import db
 
 
 # enable a logger
@@ -18,27 +17,8 @@ cache = Cache(config={
 })
 
 
-def toolsdb():
-    """ persist DB connections during a request """
-    if 'db' not in g:
-        db_dsn = os.environ["DSN_TOOLSDB"]
-        try:
-            logger.info("Connecting to database: \"{}\"".format(db_dsn))
-            g.db = psycopg2.connect(db_dsn)
-        except psycopg2.OperationalError as e:
-            logger.error("Unable to connect to database: {} {}".format(db_dsn, e))
-            abort(500, 'Unable to connect to database.')
-    return g.db
-
-
 def load():
     app = Flask(__name__, static_folder=None)
-
-    @app.teardown_appcontext  # close the DB connection after a request
-    def close_toolsdb(e=None):
-        db = g.pop('db', None)
-        if db is not None:
-            db.close()
 
     # set flask logging to match gunicorn level
     if __name__ != '__main__':
@@ -50,6 +30,9 @@ def load():
 
     # set a secret key for flask sessions
     app.secret_key = bytes(os.environ["FLASK_SESSION_KEY"], 'utf-8')
+
+    # close database connections explicitly at the end of a request
+    app.teardown_appcontext(db.close_connections)
 
     # cache
     cache.init_app(app)
