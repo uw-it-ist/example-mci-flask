@@ -23,9 +23,13 @@ The development cycle looks something like this:
 
     git clone git@github.com:uw-it-ist/example-mci-flask
     cd example-mci-flask
+    docker-compose up
+
+    # Or, to run silently in the background
     docker-compose up -d
-    # -d makes your services run silently in the background, to tail logs:
+    # and tail the logs when you need to
     docker-compose logs -f app
+
     # visit localhost:8001/example-mci-flask in your browser!
     # hack some code and reload, docker-compose.yaml mounts your local code
     # into the running container and tells gunicorn to restart when files change
@@ -34,6 +38,13 @@ The development cycle looks something like this:
     # requirements, or you just feel like it
     docker-compose build app
     docker-compose restart app
+
+    # if you're running in the foreground, Ctrl-C to shut down
+    # if you're running in the background
+    docker-compose stop
+
+    # to tear down all your containers and get a fresh start
+    docker-compose down
 
 ### Dependency pinning
 
