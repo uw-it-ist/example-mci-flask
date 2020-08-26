@@ -9,4 +9,4 @@ redis~=3.5
 whitenoise~=5.1
 requests~=2.23
 tools-flask-authz~=1.0,>=1.0.2
-tools-flask-db~=1.0
+tools-flask-db~=1.1,>=1.1.1

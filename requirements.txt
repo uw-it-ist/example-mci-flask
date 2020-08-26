@@ -20,7 +20,7 @@ psycopg2-binary==2.8.5    # via tools-flask-db
 redis==3.5.3              # via -r requirements.in
 requests==2.24.0          # via -r requirements.in
 tools-flask-authz==1.0.2  # via -r requirements.in
-tools-flask-db==1.0.0     # via -r requirements.in
+tools-flask-db==1.1.1     # via -r requirements.in
 urllib3==1.25.9           # via requests
 werkzeug==1.0.1           # via flask, tools-flask-authz
 whitenoise==5.1.0         # via -r requirements.in
