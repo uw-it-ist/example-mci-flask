@@ -1,6 +1,6 @@
 from ..app import cache
 import psycopg2.extras
-from ..app import logger
+from flask import current_app
 from tools.flask.db import toolsdb
 
 
@@ -19,5 +19,5 @@ def get_items():
     results = cur.fetchall()
     cur.close()
 
-    logger.debug("get_items() db query completed")
+    current_app.logger.debug("get_items() db query completed")
     return results

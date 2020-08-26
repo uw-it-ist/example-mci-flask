@@ -6,9 +6,7 @@ from whitenoise import WhiteNoise
 from tools.flask import db
 
 
-# enable a logger
 logging.captureWarnings(True)
-logger = logging.getLogger(__name__)
 
 cache = Cache(config={
     "CACHE_TYPE": "redis",
@@ -26,7 +24,7 @@ def load():
         app.logger.handlers = gunicorn_logger.handlers
         app.logger.setLevel(gunicorn_logger.level)
 
-    logger.info("using redis host {}".format(os.environ.get("CACHE_REDIS_HOST", 'localhost')))
+    app.logger.info("using redis host {}".format(os.environ.get("CACHE_REDIS_HOST", 'localhost')))
 
     # set a secret key for flask sessions
     app.secret_key = bytes(os.environ["FLASK_SESSION_KEY"], 'utf-8')
@@ -53,12 +51,12 @@ def load():
 
     # register the blueprint routes at the url_prefix
     from .main import main
-    logger.info("using application url prefix {}".format(prefix))
+    app.logger.info("using application url prefix {}".format(prefix))
     app.register_blueprint(main, url_prefix=prefix)
 
     from .api import api
     api_prefix = "{}/api".format(prefix)
-    logger.info("using api url prefix {}".format(api_prefix))
+    app.logger.info("using api url prefix {}".format(api_prefix))
     app.register_blueprint(api, url_prefix=api_prefix)
 
     # add whitenoise
@@ -71,6 +69,6 @@ def load():
 
     # log the URL paths that are registered
     for url in app.url_map.iter_rules():
-        logger.debug(repr(url))
+        app.logger.debug(repr(url))
 
     return app
