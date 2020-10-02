@@ -59,13 +59,11 @@ def load():
     app.logger.info("using api url prefix {}".format(api_prefix))
     app.register_blueprint(api, url_prefix=api_prefix)
 
-    # use whitenoise to serve static files with max age set to 1 year
-    whitenoise_max_age = 31536000 if not app.config["DEBUG"] else 0
+    # use whitenoise to serve static files
     app.wsgi_app = WhiteNoise(
         app.wsgi_app,
         prefix="{}/static/".format(prefix),
-        root=os.path.join(os.path.dirname(__file__), "main", "static"),
-        max_age=whitenoise_max_age
+        root=os.path.join(os.path.dirname(__file__), "main", "static")
     )
 
     # make sessions last beyond the browser window instance
