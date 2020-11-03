@@ -59,8 +59,12 @@ def load():
     app.logger.info("using api url prefix {}".format(api_prefix))
     app.register_blueprint(api, url_prefix=api_prefix)
 
-    # add whitenoise
-    app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
+    # use whitenoise to serve static files
+    app.wsgi_app = WhiteNoise(
+        app.wsgi_app,
+        prefix="{}/static/".format(prefix),
+        root=os.path.join(os.path.dirname(__file__), "main", "static")
+    )
 
     # make sessions last beyond the browser window instance
     @app.before_request
